@@ -10,4 +10,4 @@ project(
 add_executable(
     bds_btb
     src/main.cpp
- "src/pch.cpp" "src/pch.h")
+ "src/pch.cpp" "src/pch.h" "src/event/types/servertick.h")

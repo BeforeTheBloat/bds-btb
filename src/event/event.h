@@ -1,8 +1,11 @@
 #pragma once
 
+#include "./pch.h"
+
 namespace bds_btb {
     class Event {
     public:
+        Event() = default;
         Event(const Event &) = delete;
         Event &operator=(const Event &) = delete;
 
