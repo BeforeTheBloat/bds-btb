@@ -10,9 +10,6 @@
 </div>
 <br/>
 
-## 📄 Table of Contents
-- [⚒️ Build](#-build-)
-
 ## ⚒️ Build
 To build this project, on the **native branch**, for Windows 10/11 or Linux, you will need to compile this project using CMake.
 
