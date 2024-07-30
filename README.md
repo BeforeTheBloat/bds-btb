@@ -11,7 +11,7 @@
 <br/>
 
 ## 📄 Table of Contents
-- [⚒️ Build](https://github.com/BeforeTheBloat/bds-btb/tree/native#%EF%B8%8F-build)
+- [⚒️ Build](#-build-)
 
 ## ⚒️ Build
 To build this project, on the **native branch**, for Windows 10/11 or Linux, you will need to compile this project using CMake.
