@@ -11,6 +11,8 @@
 <br/>
 
 ## ⚒️ Build
-To build this project, on the **native branch**, for Windows 10/11 or Linux, you will need to compile this project using CMake.
-
-Or you can grab an executable from our [releases tab](https://github.com/BeforeTheBloat/bds-btb/releases), and run it from there.
+To build this project, on the **nodejs branch**, for Windows 10/11 or Linux, you will need to have nodejs to do the following`.
+1. Clone the repository locally or download it. Then extract the directory.
+2. Open up the terminal and enter `cd <server_folder_you_just_downloaded>` (excluding the arrows).
+3. Run `npm i`
+4. After the dependencies have been installed enter `npm run build`
