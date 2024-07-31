@@ -1,0 +1,13 @@
+{
+  "name": "before-the-bloat",
+  "version": "1.1.x",
+  "description": "Server software for Minecraft Pocket Edition 1.1.x. From a much simpler time.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm i && node index.js"
+  },
+  "keywords": [],
+  "author": "xStormy, Chyves, Err0r, gorilla",
+  "license": "Apache-2.0"
+}
