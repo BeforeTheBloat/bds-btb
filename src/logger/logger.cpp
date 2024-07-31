@@ -17,10 +17,10 @@ std::string Logger::CurrentTime() {
 void Logger::Log(Level level, const std::string& message) {
     std::string levelStr;
     switch (level) {
-    case INFO:
+    case LOG_INFO:
         levelStr = "INFO";
         break;
-    case ERROR:
+    case LOG_ERROR:
         levelStr = "ERROR";
         break;
     }
