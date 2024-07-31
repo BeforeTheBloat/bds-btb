@@ -4,11 +4,13 @@
 
 void onServerUpdate(void* event) {
     ServerUpdate* ev = static_cast<ServerUpdate*>(event);
-    std::cout << ev->testingnumber << std::endl;
+    
 }
 
 int main() {
+    Logger::Info("BDS-BTB Started...");
     while (true) {
+        // game loop running in the server
         EventManager::registerListener(ServerUpdateType, onServerUpdate);
 
         ServerUpdate event;
