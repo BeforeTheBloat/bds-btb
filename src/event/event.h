@@ -1,31 +1,28 @@
 #pragma once
 
-#include "./pch.h"
+#include "../pch.h"
+#include <functional>
+#include <vector>
+#include <unordered_map>
 
-namespace bds_btb {
-    class Event {
-    public:
-        Event() = default;
-        Event(const Event &) = delete;
-        Event &operator=(const Event &) = delete;
+enum EventType {
+    ServerUpdateType,
+};
 
-        virtual ~Event() = default;
+class Event {
+public:
+    virtual EventType getType() const = 0;
+    bool* mCancelled;
+};
 
-        [[nodiscard]] virtual std::string getEventName() const = 0;
-        [[nodiscard]] virtual bool isCancellable() const = 0;
-        [[nodiscard]] bool isCancelled() const {
-            if (!isCancellable()) {
-                return false;
-            }
-            return mCancelled;
-        };
-        void setCancelled(bool cancel)
-        {
-            if (isCancellable()) {
-                mCancelled = cancel;
-            }
-        }
-    private:
-        bool mCancelled{false};
-    };
+
+class EventManager {
+public:
+    using EventListener = void(*)(void*);
+
+    static void registerListener(EventType eventType, EventListener listener);
+    static void triggerEvent(Event* event);
+
+private:
+    static std::unordered_map<EventType, std::vector<EventListener>> listeners;
 };

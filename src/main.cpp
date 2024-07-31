@@ -1,23 +1,19 @@
 #include "pch.h"
 
+#include "event/types/ServerUpdate.h"
+
+void onServerUpdate(void* event) {
+    ServerUpdate* ev = static_cast<ServerUpdate*>(event);
+    std::cout << ev->testingnumber << std::endl;
+}
+
 int main() {
-    std::string input;
-
     while (true) {
-        bds_btb::EventManager eventManager;
+        EventManager::registerListener(ServerUpdateType, onServerUpdate);
 
-        auto serverTickEvent = std::make_shared<bds_btb::ServerTick>();
-        eventManager.addEvent(serverTickEvent);
-
-        std::cout << "Hello World!" << std::endl;
-        std::cout << "Enter something (or press Enter to exit): ";
-        std::getline(std::cin, input);
-
-        if (input.empty()) {
-            break;
-        }
-        
-        std::cout << "You entered: " << input << std::endl;
+        ServerUpdate event;
+        event.testingnumber = 1;
+        EventManager::triggerEvent(&event);
     }
 
     return 0;

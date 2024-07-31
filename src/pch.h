@@ -4,8 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <unordered_map>
+#include <functional>
 
 #include "event/event.h"
-#include "event/manager.h"
-
-#include "event/types/servertick.h"

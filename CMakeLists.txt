@@ -10,4 +10,13 @@ project(
 add_executable(
     bds_btb
     src/main.cpp
- "src/pch.cpp" "src/pch.h" "src/event/types/servertick.h")
+    src/pch.cpp
+    src/event/event.cpp
+    src/pch.h
+    src/event/event.h
+    src/event/types/ServerUpdate.h
+)
+
+if(MSVC)
+    target_precompile_headers(bds_btb PRIVATE src/pch.h)
+endif()
