@@ -1,7 +1,7 @@
 {
   "name": "before-the-bloat",
   "version": "0.0.1",
-  "description": "Server software for Minecraft Pocket Edition 1.1.x. From a much simpler time.",
+  "description": "Server software for Minecraft Pocket Edition 1.1.x.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
