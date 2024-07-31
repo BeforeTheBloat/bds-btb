@@ -14,6 +14,5 @@
 To run this project, on the **nodejs branch**, for Windows 10/11 or Linux, you will need to have [Node.js](https://nodejs.org/en) installed on your system and to do the following.
 1. Clone the repository locally or download it. Then extract the directory.
 2. Open up the terminal and enter `cd <server_folder_you_just_downloaded>` (excluding the arrows).
-3. Then enter `npm i`
-4. After the dependencies have been installed enter `npm run start`
-After this the server should start running. Configure server properties in the `./server.properties` file in the root of the directory. To install a plugin simply drag the plugin archive or folder into the `./plugins` directory
+3. Then enter `npm run start`. After the dependencies have been installed your server will be up and running.
+Configure server properties in the `./server.properties` file in the root of the directory. To install a plugin simply drag the plugin archive or folder into the `./plugins` directory
