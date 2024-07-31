@@ -14,6 +14,10 @@
 #include <iostream>
 #include <cstring>
 #include <thread>
+#include <iostream>
+#include <cerrno> 
+#include <vector>
+#include <string>
 
 #ifdef _WIN32
 

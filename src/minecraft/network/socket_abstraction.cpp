@@ -1,9 +1,4 @@
 #include "socket_abstraction.h"
-#include <iostream>
-#include <cstring> // For strerror
-#include <cerrno>  // For errno
-#include <vector>
-#include <string>
 
 SocketAbstraction::SocketAbstraction() : sockfd(-1) {
 #ifdef _WIN32
@@ -48,28 +43,35 @@ bool SocketAbstraction::sendData(const std::string& data) {
 }
 
 std::string SocketAbstraction::receiveData(size_t bufferSize) {
+    if (sockfd < 0) {
+        std::cerr << "Invalid socket descriptor" << std::endl;
+        return "";
+    }
+
     std::vector<char> buffer(bufferSize);
     int receivedBytes = recv(sockfd, buffer.data(), static_cast<int>(bufferSize) - 1, 0);
 
     if (receivedBytes < 0) {
-#ifdef _WIN32
         int errorCode = WSAGetLastError();
-        std::cerr << "Error receiving data: " << errorCode << " (" << strerror(errorCode) << ")" << std::endl;
-#else
-        std::cerr << "Error receiving data: " << strerror(errno) << std::endl;
-#endif
+        std::cerr << "Error receiving data: " << errorCode << std::endl;
         return "";
-    }
+}
 
     if (receivedBytes == 0) {
         return "";
     }
 
-    if (receivedBytes >= static_cast<int>(bufferSize)) {
-        std::cerr << "Received data is larger than buffer size" << std::endl;
-    }
-
     buffer[receivedBytes] = '\0';
+
+
+    //hex
+    std::ostringstream hexStream;
+    hexStream << "Received data (hex): ";
+    for (int i = 0; i < receivedBytes; ++i) {
+        hexStream << std::hex << std::setw(2) << std::setfill('0') << (static_cast<int>(static_cast<unsigned char>(buffer[i]))) << " ";
+    }
+    std::cout << hexStream.str() << std::endl;
+
     return std::string(buffer.data());
 }
 
@@ -103,7 +105,7 @@ std::string SocketAbstraction::GetLocalIPAddress() {
             if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET) {
                 struct sockaddr_in* sa = (struct sockaddr_in*)ifa->ifa_addr;
                 ipAddress = inet_ntoa(sa->sin_addr);
-                break; // Return the first non-loopback IP address
+                break;
             }
         }
         freeifaddrs(ifaddr);
