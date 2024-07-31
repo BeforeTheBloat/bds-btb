@@ -10,9 +10,9 @@
 </div>
 <br/>
 
-## ⚒️ Build
+## 🏃 Running
 To build this project, on the **nodejs branch**, for Windows 10/11 or Linux, you will need to have [Node.js](https://nodejs.org/en) installed on your system and to do the following.
 1. Clone the repository locally or download it. Then extract the directory.
 2. Open up the terminal and enter `cd <server_folder_you_just_downloaded>` (excluding the arrows).
 3. Run `npm i`
-4. After the dependencies have been installed enter `npm run build`
+4. After the dependencies have been installed enter `npm run start`
