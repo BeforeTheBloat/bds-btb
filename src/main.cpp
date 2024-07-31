@@ -1,36 +1,47 @@
 #include "pch.h"
-
 #include "event/types/ServerUpdate.h"
 
 void onServerUpdate(void* event) {
     ServerUpdate* ev = static_cast<ServerUpdate*>(event);
-    
+    // Handle server update event
 }
 
 int main() {
-    Logger::Info("BDS-BTB Started...");
-    Logger::Info("Attemping to open socket.");
+    try {
+        Logger::Info("BDS-BTB Started...");
+        Logger::Info("Attempting to open socket.");
 
-    SocketAbstraction server;
-    if (!server.openSocket("0.0.0.0", 19132)) {
-        Logger::Error("Failed to open server socket");
+        SocketAbstraction server;
+        if (!server.openSocket("0.0.0.0", 19132)) {
+            throw std::runtime_error("Failed to open server socket");
+        }
+
+        Logger::Info("Socket opened (Port 19132).");
+
+        const size_t bufferSize = 1024;
+        std::vector<char> buffer(bufferSize);
+
+        while (true) {
+            EventManager::registerListener(ServerUpdateType, onServerUpdate);
+
+            std::string receivedMessage = server.receiveData(bufferSize);
+            if (!receivedMessage.empty()) {
+                Logger::Info("Received message: " + receivedMessage);
+            }
+
+            ServerUpdate event;
+            event.testingnumber = 1;
+            EventManager::triggerEvent(&event);
+        }
+    }
+    catch (const std::exception& e) {
+        Logger::Error(std::string("Exception: ") + e.what());
         return 1;
     }
-
-    Logger::Info("Socket opened (Port 19132).");
-
-    while (true) {
-        // game loop running in the server
-        EventManager::registerListener(ServerUpdateType, onServerUpdate);
-
-        ServerUpdate event;
-        event.testingnumber = 1;
-        EventManager::triggerEvent(&event);
+    catch (...) {
+        Logger::Error("Unknown exception occurred.");
+        return 1;
     }
-
-    // clean up resources and exit
-    server.closeSocket();
-
 
     return 0;
 }

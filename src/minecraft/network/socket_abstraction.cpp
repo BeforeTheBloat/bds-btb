@@ -1,18 +1,23 @@
 #include "socket_abstraction.h"
+#include <iostream>
+#include <cstring> // For strerror
+#include <cerrno>  // For errno
+#include <vector>
+#include <string>
 
 SocketAbstraction::SocketAbstraction() : sockfd(-1) {
-    #ifdef _WIN32
-        if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-            Logger::Error("WSAStartup failed");
-        }
-    #endif
+#ifdef _WIN32
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        Logger::Error("WSAStartup failed");
     }
+#endif
+}
 
-    SocketAbstraction::~SocketAbstraction() {
-        closeSocket();
-    #ifdef _WIN32
-        WSACleanup();
-    #endif
+SocketAbstraction::~SocketAbstraction() {
+    closeSocket();
+#ifdef _WIN32
+    WSACleanup();
+#endif
 }
 
 bool SocketAbstraction::openSocket(const std::string& ip, unsigned short port) {
@@ -26,57 +31,83 @@ bool SocketAbstraction::openSocket(const std::string& ip, unsigned short port) {
     servaddr.sin_port = htons(port);
     inet_pton(AF_INET, ip.c_str(), &servaddr.sin_addr);
 
+    if (bind(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
+        Logger::Error("Error binding socket");
+        closeSocket();
+        return false;
+    }
+
     return true;
 }
 
+
 bool SocketAbstraction::sendData(const std::string& data) {
     if (sockfd < 0) return false;
-    size_t sentBytes = sendto(sockfd, data.c_str(), data.size(), 0, (struct sockaddr*)&servaddr, sizeof(servaddr));
-    return sentBytes == data.size();
+    int sentBytes = sendto(sockfd, data.c_str(), static_cast<int>(data.size()), 0, (struct sockaddr*)&servaddr, sizeof(servaddr));
+    return sentBytes == static_cast<int>(data.size());
 }
 
 std::string SocketAbstraction::receiveData(size_t bufferSize) {
     std::vector<char> buffer(bufferSize);
-    size_t receivedBytes = recv(sockfd, buffer.data(), bufferSize, 0);
+    int receivedBytes = recv(sockfd, buffer.data(), static_cast<int>(bufferSize) - 1, 0);
 
-    if (receivedBytes > 0) {
-        return std::string(buffer.data(), receivedBytes);
+    if (receivedBytes < 0) {
+#ifdef _WIN32
+        int errorCode = WSAGetLastError();
+        std::cerr << "Error receiving data: " << errorCode << " (" << strerror(errorCode) << ")" << std::endl;
+#else
+        std::cerr << "Error receiving data: " << strerror(errno) << std::endl;
+#endif
+        return "";
     }
 
-    return "";
+    if (receivedBytes == 0) {
+        return "";
+    }
+
+    if (receivedBytes >= static_cast<int>(bufferSize)) {
+        std::cerr << "Received data is larger than buffer size" << std::endl;
+    }
+
+    buffer[receivedBytes] = '\0';
+    return std::string(buffer.data());
 }
+
 
 void SocketAbstraction::closeSocket() {
     if (sockfd >= 0) {
-        #ifdef _WIN32
-            closesocket(sockfd);
-        #else
-            close(sockfd);
-        #endif
-            sockfd = -1;
+#ifdef _WIN32
+        closesocket(sockfd);
+#else
+        close(sockfd);
+#endif
+        sockfd = -1;
     }
 }
 
 std::string SocketAbstraction::GetLocalIPAddress() {
-    #ifdef _WIN32
-        char hostname[256];
-        if (gethostname(hostname, sizeof(hostname)) == 0) {
-            struct hostent* host = gethostbyname(hostname);
-            if (host) {
-                return inet_ntoa(*(struct in_addr*)host->h_addr_list[0]);
+    std::string ipAddress = "127.0.0.1";
+
+#ifdef _WIN32
+    char hostname[256];
+    if (gethostname(hostname, sizeof(hostname)) == 0) {
+        struct hostent* host = gethostbyname(hostname);
+        if (host && host->h_addr_list[0]) {
+            ipAddress = inet_ntoa(*(struct in_addr*)host->h_addr_list[0]);
+        }
+    }
+#elif defined(__unix__) || defined(__unix)
+    struct ifaddrs* ifaddr = nullptr;
+    if (getifaddrs(&ifaddr) == 0) {
+        for (struct ifaddrs* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+            if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET) {
+                struct sockaddr_in* sa = (struct sockaddr_in*)ifa->ifa_addr;
+                ipAddress = inet_ntoa(sa->sin_addr);
+                break; // Return the first non-loopback IP address
             }
         }
-    #elif defined(__unix__) || defined(__unix)
-        struct ifaddrs* ifaddr, * ifa;
-        if (getifaddrs(&ifaddr) == 0) {
-            for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
-                if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET) {
-                    struct sockaddr_in* sa = (struct sockaddr_in*)ifa->ifa_addr;
-                    return inet_ntoa(sa->sin_addr);
-                }
-            }
-            freeifaddrs(ifaddr);
-        }
-    #endif
-        return "127.0.0.1";
-};
+        freeifaddrs(ifaddr);
+    }
+#endif
+    return ipAddress;
+}
