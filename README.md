@@ -11,7 +11,7 @@
 <br/>
 
 ## ⚒️ Build
-To build this project, on the **nodejs branch**, for Windows 10/11 or Linux, you will need to have nodejs to do the following`.
+To build this project, on the **nodejs branch**, for Windows 10/11 or Linux, you will need to have [Node.js](https://nodejs.org/en) installed on your system and do the following`.
 1. Clone the repository locally or download it. Then extract the directory.
 2. Open up the terminal and enter `cd <server_folder_you_just_downloaded>` (excluding the arrows).
 3. Run `npm i`
