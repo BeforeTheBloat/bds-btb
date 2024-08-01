@@ -17,6 +17,7 @@
 #include <iostream>
 #include <cerrno> 
 #include <vector>
+#include <filesystem>
 #include <string>
 
 #ifdef _WIN32
@@ -40,3 +41,4 @@
 #include "logger/logger.h"
 #include "event/event.h"
 #include "minecraft/network/socket_abstraction.h"
+#include "lua/scripting.h"

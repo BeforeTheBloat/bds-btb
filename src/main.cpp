@@ -9,6 +9,7 @@ void onServerUpdate(void* event) {
 int main() {
     try {
         Logger::Info("BDS-BTB Started...");
+
         Logger::Info("Attempting to open socket.");
 
         SocketAbstraction server;
@@ -20,6 +21,8 @@ int main() {
 
         const size_t bufferSize = 1024;
         std::vector<char> buffer(bufferSize);
+
+        LuaScripting::Init();
 
         while (true) {
             EventManager::registerListener(ServerUpdateType, onServerUpdate);
@@ -33,6 +36,8 @@ int main() {
             event.testingnumber = 1;
             EventManager::triggerEvent(&event);
         }
+
+        LuaScripting::Close();
     }
     catch (const std::exception& e) {
         Logger::Error(std::string("Exception: ") + e.what());
