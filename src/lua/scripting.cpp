@@ -6,19 +6,19 @@ namespace LuaScripting {
     lua_State* L = nullptr;
 
     int lua_logger_info(lua_State* L) {
-        const char* message = luaL_checkstring(L, 2);
+        const char* message = luaL_checkstring(L, 1);
         Logger::LuaInfo(message);
         return 0;
     }
 
     int lua_logger_success(lua_State* L) {
-        const char* message = luaL_checkstring(L, 2);
+        const char* message = luaL_checkstring(L, 1);
         Logger::LuaSuccess(message);
         return 0;
     }
 
     int lua_logger_error(lua_State* L) {
-        const char* message = luaL_checkstring(L, 2);
+        const char* message = luaL_checkstring(L, 1);
         Logger::LuaError(message);
         return 0;
     }
