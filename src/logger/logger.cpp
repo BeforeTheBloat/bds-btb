@@ -1,4 +1,4 @@
-#include "Logger.h"
+#include "logger.h"
 
 std::string Logger::CurrentTime() {
     auto now = std::chrono::system_clock::now();
