@@ -14,10 +14,10 @@ int main() {
 
         SocketAbstraction server;
         if (!server.openSocket("0.0.0.0", 19132)) {
-            throw std::runtime_error("Failed to open server socket");
+            Logger::Error("Failed to open server socket");
         }
 
-        Logger::Info("Socket opened (Port 19132).");
+        Logger::Success("Socket opened (Port 19132).");
 
         const size_t bufferSize = 1024;
         std::vector<char> buffer(bufferSize);
