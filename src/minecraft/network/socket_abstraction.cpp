@@ -1,4 +1,45 @@
-#include "socket_abstraction.h"
+#pragma once
+#include "../../pch.h"
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <unistd.h>
+#endif
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+
+class SocketAbstraction {
+public:
+    SocketAbstraction();
+    ~SocketAbstraction();
+
+    bool openSocket(const std::string& ip, unsigned short port);
+    bool sendData(const std::string& data);
+    std::string receiveData(size_t bufferSize = 1024);
+    void closeSocket();
+
+    std::string GetLocalIPAddress();
+private:
+    int sockfd;
+    struct sockaddr_in servaddr;
+
+#ifdef _WIN32
+    WSADATA wsaData;
+#endif
+};
+
+// Implementation
 
 SocketAbstraction::SocketAbstraction() : sockfd(-1) {
 #ifdef _WIN32
@@ -35,7 +76,6 @@ bool SocketAbstraction::openSocket(const std::string& ip, unsigned short port) {
     return true;
 }
 
-
 bool SocketAbstraction::sendData(const std::string& data) {
     if (sockfd < 0) return false;
     int sentBytes = sendto(sockfd, data.c_str(), static_cast<int>(data.size()), 0, (struct sockaddr*)&servaddr, sizeof(servaddr));
@@ -52,10 +92,14 @@ std::string SocketAbstraction::receiveData(size_t bufferSize) {
     int receivedBytes = recv(sockfd, buffer.data(), static_cast<int>(bufferSize) - 1, 0);
 
     if (receivedBytes < 0) {
+#ifdef _WIN32
         int errorCode = WSAGetLastError();
         std::cerr << "Error receiving data: " << errorCode << std::endl;
+#else
+        std::cerr << "Error receiving data: " << strerror(errno) << std::endl;
+#endif
         return "";
-}
+    }
 
     if (receivedBytes == 0) {
         return "";
@@ -63,8 +107,7 @@ std::string SocketAbstraction::receiveData(size_t bufferSize) {
 
     buffer[receivedBytes] = '\0';
 
-
-    //hex
+    // Hex output
     std::ostringstream hexStream;
     hexStream << "Received data (hex): ";
     for (int i = 0; i < receivedBytes; ++i) {
@@ -74,7 +117,6 @@ std::string SocketAbstraction::receiveData(size_t bufferSize) {
 
     return std::string(buffer.data());
 }
-
 
 void SocketAbstraction::closeSocket() {
     if (sockfd >= 0) {
@@ -98,7 +140,7 @@ std::string SocketAbstraction::GetLocalIPAddress() {
             ipAddress = inet_ntoa(*(struct in_addr*)host->h_addr_list[0]);
         }
     }
-#elif defined(__unix__) || defined(__unix)
+#else
     struct ifaddrs* ifaddr = nullptr;
     if (getifaddrs(&ifaddr) == 0) {
         for (struct ifaddrs* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
@@ -111,5 +153,6 @@ std::string SocketAbstraction::GetLocalIPAddress() {
         freeifaddrs(ifaddr);
     }
 #endif
+
     return ipAddress;
 }
