@@ -7,13 +7,13 @@ namespace LuaScripting {
 
     int lua_logger_info(lua_State* L) {
         const char* message = luaL_checkstring(L, 1);
-        Logger::Info(message);
+        Logger::LuaInfo(message);
         return 0;
     }
 
     int lua_logger_error(lua_State* L) {
         const char* message = luaL_checkstring(L, 1);
-        Logger::Error(message);
+        Logger::LuaError(message);
         return 0;
     }
 

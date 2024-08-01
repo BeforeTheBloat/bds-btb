@@ -27,3 +27,17 @@ void Logger::Log(Level level, const std::string& message) {
     
     std::cout << "[" << CurrentTime() << " " << levelStr << "] " << message << std::endl;
 }
+
+void Logger::LuaLog(Level level, const std::string& message) {
+    std::string levelStr;
+    switch (level) {
+    case LOG_INFO:
+        levelStr = "INFO";
+        break;
+    case LOG_ERROR:
+        levelStr = "ERROR";
+        break;
+    }
+
+    std::cout << "[" << CurrentTime() << " " << levelStr << "] [LUA] " << message << std::endl;
+}
