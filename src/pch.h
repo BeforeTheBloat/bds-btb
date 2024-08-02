@@ -31,4 +31,4 @@
 #include "event/event.h"
 #include "lua/scripting.h"
 
-#include "minecraft/network/packets/LoginPacket.h"
+#include "minecraft/network/protocol.h"

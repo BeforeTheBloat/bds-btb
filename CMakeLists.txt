@@ -16,7 +16,7 @@ FetchContent_Declare(
 # Fetch RakNet
 FetchContent_Declare(
     raknet
-    GIT_REPOSITORY https://github.com/facebookarchive/RakNet.git
+    GIT_REPOSITORY https://github.com/BeforeTheBloat/RakNet.git
     GIT_TAG master
 )
 

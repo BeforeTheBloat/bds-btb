@@ -31,6 +31,15 @@ int main() {
 
                 Logger::Info("Received packet with ID: " + std::to_string(packet->data[0]));
 
+                switch (packet->data[0]) {
+                case 1:
+                    LoginPacket* loginPacket = (LoginPacket*)packet;
+                    
+                    Logger::Info(("Protocol: " + std::to_string(loginPacket->protocol)));
+                    Logger::Info(("Game Edition: " + std::to_string(loginPacket->gameEdition)));
+
+
+                };
 
             }
             
