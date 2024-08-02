@@ -20,25 +20,15 @@
 #include <filesystem>
 #include <string>
 
-#ifdef _WIN32
-
-// Networking
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
-#endif
-
-#ifdef linux
-
-//Networking
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-
-#endif
+#include <RakPeerInterface.h>
+#include <RakNetTypes.h>
+#include <MessageIdentifiers.h>
+#include <BitStream.h>
+#include <nlohmann/json.hpp>
+#include <base64.h>
 
 #include "logger/logger.h"
 #include "event/event.h"
-#include "minecraft/network/socket_abstraction.h"
 #include "lua/scripting.h"
+
+#include "minecraft/network/packets/LoginPacket.h"

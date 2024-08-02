@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "event/types/ServerUpdate.h"
 
+using namespace RakNet;
+
 void onServerUpdate(void* event) {
     ServerUpdate* ev = static_cast<ServerUpdate*>(event);
     // Handle server update event
@@ -12,30 +14,35 @@ int main() {
 
         Logger::Info("Attempting to open socket.");
 
-        SocketAbstraction server;
-        if (!server.openSocket("0.0.0.0", 19132)) {
-            Logger::Error("Failed to open server socket");
-        }
+        RakPeerInterface* peer = RakPeerInterface::GetInstance();
+        SocketDescriptor sd(19132, 0);
+        peer->Startup(1, &sd, 1);
+        peer->SetMaximumIncomingConnections(10);
 
         Logger::Success("Socket opened (Port 19132).");
-
-        const size_t bufferSize = 1024;
-        std::vector<char> buffer(bufferSize);
 
         LuaScripting::Init();
 
         while (true) {
             EventManager::registerListener(ServerUpdateType, onServerUpdate);
 
-            std::string receivedMessage = server.receiveData(bufferSize);
-            if (!receivedMessage.empty()) {
-                Logger::Info("Received message: " + receivedMessage);
+            Packet* packet;
+            while ((packet = peer->Receive())) {
+
+                Logger::Info("Received packet with ID: " + std::to_string(packet->data[0]));
+
+
             }
+            
 
             ServerUpdate event;
             event.testingnumber = 1;
             EventManager::triggerEvent(&event);
         }
+
+        LuaScripting::Close();
+        peer->Shutdown(100);
+        RakPeerInterface::DestroyInstance(peer);
 
         LuaScripting::Close();
     }
