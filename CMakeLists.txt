@@ -80,6 +80,7 @@ add_executable(bds_btb
     src/lua/scripting.cpp
     src/logger/logger.cpp
     src/event/event.cpp
+    src/minecraft/network/protocol.cpp
     ${base64_SOURCE_DIR}/base64.cpp
 )
 

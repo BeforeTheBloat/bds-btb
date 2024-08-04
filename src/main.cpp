@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "event/types/ServerUpdate.h"
 
-using namespace RakNet;
-
 struct ResponsePacket1 {
     int64_t pingId;
     int64_t serverId;
@@ -40,38 +38,7 @@ int main() {
         while (true) {
             EventManager::registerListener(ServerUpdateType, onServerUpdate);
 
-            Packet* packet;
-            while ((packet = peer->Receive())) {
-
-                Logger::Info("Received packet with ID: " + std::to_string(packet->data[0]));
-
-                std::string hexData;
-                for (size_t i = 0; i < packet->length; ++i) {
-                    hexData += " " + to_hex_string(packet->data[i]);
-                }
-                Logger::Info("Packet Data (Hex):" + hexData);
-
-                std::string u8Data(reinterpret_cast<const char*>(packet->data), packet->length);
-                Logger::Info("Packet Data (u8string): " + std::string(u8Data.begin(), u8Data.end()));
-
-                std::string charData(reinterpret_cast<const char*>(packet->data), packet->length);
-                Logger::Info("Packet Data (char): " + charData);
-
-                if (packet->data[0] == 1) {
-                    Logger::Info("Ping received, sending empty packet back.");
-
-                    ResponsePacket1 responsePacket;
-                    responsePacket.pingId = 0x00000000003c6d0d;
-                    responsePacket.serverId = 0x00000000372cdc9e;
-                    responsePacket.identifier = "MCPE;Steve;2 7;1.1.3;0;20";
-
-                    BitStream bs;
-                    bs.Write(reinterpret_cast<const char*>(&responsePacket), sizeof(responsePacket));
-                    peer->Send(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-                }
-
-                peer->DeallocatePacket(packet);
-            }
+            ProtocolManager::Init(peer);
             
 
             ServerUpdate event;
