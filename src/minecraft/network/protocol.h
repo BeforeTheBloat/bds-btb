@@ -7,6 +7,8 @@
 
 #include "packets/PingPacket.h"
 
+#include "../../pch.h"
+
 using namespace RakNet;
 
 class ProtocolManager {
