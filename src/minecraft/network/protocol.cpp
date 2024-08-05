@@ -1,5 +1,14 @@
 #include "protocol.h"
 
+std::string ToHexString(const unsigned char* data, size_t length) {
+	std::ostringstream oss;
+	oss << std::hex << std::setfill('0');
+	for (size_t i = 0; i < length; ++i) {
+		oss << std::setw(2) << static_cast<int>(data[i]);
+	}
+	return oss.str();
+}
+
 void ProtocolManager::Init(RakPeerInterface* peer) {
 	Packet* packet;
 	while ((packet = peer->Receive())) {
@@ -7,24 +16,13 @@ void ProtocolManager::Init(RakPeerInterface* peer) {
 
 		Logger::Info("Received packet with ID: " + std::to_string(packetType));
 
-		switch (packetType) {
-		case 0:
-			ProtocolManager::PingPacketCallback(peer, packet);
-		case 1:
-			ProtocolManager::PingPacketCallback(peer, packet);
-		}
+		ProtocolManager::PingPacketCallback(peer, packet);
 
 		peer->DeallocatePacket(packet);
 	}
 };
 
 void ProtocolManager::PingPacketCallback(RakPeerInterface* peer, Packet* packet) {
-	PingPacket* pingPacket = reinterpret_cast<PingPacket*>(packet);
-
-	PingPacket pongPacket;
-	pongPacket.packetType = 1;
-	pongPacket.clientTimestamp = pingPacket->clientTimestamp;
-
-	peer->Send(reinterpret_cast<const char*>(&pongPacket), sizeof(PingPacket), HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-	Logger::Info("send a pong");
-};
+	std::string hexData = ToHexString(packet->data, packet->length);
+	Logger::Info("packet data: " + hexData);
+}; 

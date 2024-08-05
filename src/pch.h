@@ -19,6 +19,8 @@
 #include <vector>
 #include <filesystem>
 #include <string>
+#include <iomanip>
+#include <sstream>
 
 #include <RakPeerInterface.h>
 #include <RakNetTypes.h>
